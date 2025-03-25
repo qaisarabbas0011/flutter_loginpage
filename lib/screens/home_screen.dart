@@ -1,85 +1,174 @@
 import 'package:flutter/material.dart';
-import '../../widgets/user_card.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  final List<Map<String, String>> userData = [
-    {"name": "Qaisar Khan", "contact": "qaisar1@gmail.com", "number": "123-456-7890"},
-    {"name": "Ahmed Ali", "contact": "ahmed.ali@gmail.com", "number": "234-567-8901"},
-    {"name": "Fatima Noor", "contact": "fatima.noor@gmail.com", "number": "345-678-9012"},
-    {"name": "Aisha Khan", "contact": "aisha.khan@gmail.com", "number": "456-789-0123"},
-    {"name": "Zain Malik", "contact": "zain.malik@gmail.com", "number": "567-890-1234"},
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    HomeContent(),
+    ProfileScreen(),
+    SettingsScreen(),
   ];
+
+  void _onAddUser() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add New User'),
+        content: TextField(
+          decoration: InputDecoration(hintText: 'Enter User Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home")),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/user.png'), // Replace with your asset image
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Qaisar Khan',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
+      appBar: AppBar(
+        title: Text(
+          'MyApp',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.teal,
+        elevation: 0,
+      ),
+      body: AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),
+        child: _screens[_currentIndex],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+        ],
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onAddUser,
+        backgroundColor: Colors.teal,
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+    );
+  }
+}
+
+class HomeContent extends StatelessWidget {
+  final List<Map<String, String>> users = [
+    {'name': 'Qaisar Khan', 'contact': 'qaisar@example.com'},
+    {'name': 'Ali Ahmed', 'contact': 'ali@example.com'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: EdgeInsets.only(bottom: 12),
+            elevation: 4,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.teal,
+                child: Text(users[index]['name']![0]),
               ),
+              title: Text(
+                users[index]['name']!,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(users[index]['contact']!),
+              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              onTap: () {},
             ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Profile"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Logout"),
-              onTap: () {
-                Navigator.pop(context); // Close Drawer
-                Navigator.pop(context); // Simulate logout
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: userData.length,
-          itemBuilder: (context, index) {
-            return UserCard(
-              name: userData[index]["name"]!,
-              contact: userData[index]["contact"]!,
-              number: userData[index]["number"]!,
-            );
+    );
+  }
+}
+
+class UserSearchDelegate extends SearchDelegate<String> {
+  final List<String> users = ['Qaisar Khan', 'Ali Ahmed', 'Usman Khan', 'Ayesha Malik'];
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = users.where((user) => user.toLowerCase().contains(query.toLowerCase())).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(results[index]),
+          onTap: () {
+            close(context, results[index]);
           },
-        ),
-      ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = users.where((user) => user.toLowerCase().startsWith(query.toLowerCase())).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestions[index]),
+          onTap: () {
+            query = suggestions[index];
+            showResults(context);
+          },
+        );
+      },
     );
   }
 }
