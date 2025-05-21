@@ -10,10 +10,12 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+
       margin: const EdgeInsets.all(8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: CircleAvatar(
+          backgroundImage: AssetImage('images/insta2.png'),
           backgroundColor: Colors.indigo,
           child: Text(name[0], style: TextStyle(color: Colors.white)),
         ),
