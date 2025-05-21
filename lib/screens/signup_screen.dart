@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-import 'signup_screen.dart';
-import 'forget_passwordscreen.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
   bool _isButtonEnabled = false;
   bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   bool _isUsernameValid = true;
   bool _isPasswordValid = true;
-  String _usernameErrorMessage = '';
+  bool _doPasswordsMatch = true;
   bool _hasStartedTypingUsername = false;
+  String _usernameErrorMessage = '';
 
   final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
   final RegExp _passwordRegex = RegExp(r'^[a-zA-Z0-9!@#\$&*~]+$');
@@ -37,7 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
       _isPasswordValid = _passwordController.text.length >= 6 &&
           _passwordRegex.hasMatch(_passwordController.text);
 
-      _isButtonEnabled = _isUsernameValid && _isPasswordValid;
+      _doPasswordsMatch =
+          _passwordController.text == _confirmPasswordController.text;
+
+      _isButtonEnabled =
+          _isUsernameValid && _isPasswordValid && _doPasswordsMatch;
     });
   }
 
@@ -51,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _checkFields();
     });
     _passwordController.addListener(_checkFields);
+    _confirmPasswordController.addListener(_checkFields);
   }
 
   @override
@@ -101,35 +107,38 @@ class _LoginScreenState extends State<LoginScreen> {
                     true,
                     'At least 6 characters with letters, numbers, or special characters',
                     Icons.lock,
+                    isConfirmField: false,
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ForgotPasswordScreen(),
-                          ),
-                        );
-                      },
+                  SizedBox(height: 20),
+                  _buildTextField(
+                    'Confirm Password',
+                    _confirmPasswordController,
+                    true,
+                    'Re-enter password',
+                    Icons.lock_outline,
+                    isConfirmField: true,
+                  ),
+                  if (!_doPasswordsMatch && _confirmPasswordController.text.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5),
                       child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.white70),
+                        ' Passwords do not match!',
+                        style: TextStyle(color: Colors.redAccent, fontSize: 12),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 30),
                   AnimatedOpacity(
                     opacity: _isButtonEnabled ? 1.0 : 0.5,
                     duration: Duration(milliseconds: 300),
                     child: ElevatedButton(
                       onPressed: _isButtonEnabled
                           ? () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()),
+                              // Sign up logic or redirect here
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Account created!'),
+                                  backgroundColor: Colors.green,
+                                ),
                               );
                             }
                           : null,
@@ -144,22 +153,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: Text(
-                        'Login',
+                        'Sign Up',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpScreen()),
-                      );
-                    },
+                    onPressed: () => Navigator.pop(context),
                     child: Text(
-                      "Don't have an account? Sign Up",
+                      "Already have an account? Login",
                       style: TextStyle(color: Colors.white70),
                     ),
                   ),
@@ -173,7 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      bool isPassword, String hintText, IconData icon) {
+      bool isPassword, String hintText, IconData icon,
+      {bool isConfirmField = false}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -188,7 +193,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: TextField(
         controller: controller,
-        obscureText: isPassword ? !_isPasswordVisible : false,
+        obscureText: isPassword
+            ? isConfirmField
+                ? !_isConfirmPasswordVisible
+                : !_isPasswordVisible
+            : false,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 15),
           prefixIcon: Icon(icon, color: Colors.teal),
@@ -199,14 +208,22 @@ class _LoginScreenState extends State<LoginScreen> {
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    isConfirmField
+                        ? (_isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off)
+                        : (_isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                     color: Colors.teal,
                   ),
                   onPressed: () {
                     setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
+                      if (isConfirmField) {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      } else {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      }
                     });
                   },
                 )

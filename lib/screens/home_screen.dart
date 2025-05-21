@@ -14,6 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeContent(),
     ProfileScreen(),
     SettingsScreen(),
+    SearchScreen(),
   ];
 
   void _onAddUser() {
@@ -43,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'MyApp',
+          'Insta',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.teal,
@@ -59,19 +60,26 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
         backgroundColor: Colors.white,
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.grey,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: _onAddUser,
         backgroundColor: Colors.teal,
         child: Icon(Icons.add),
+        elevation: 0,
+        tooltip: 'Add User',
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),   
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      
     );
   }
 }
@@ -102,7 +110,8 @@ class HomeContent extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(users[index]['contact']!),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              trailing:
+                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
               onTap: () {},
             ),
           );
@@ -112,8 +121,31 @@ class HomeContent extends StatelessWidget {
   }
 }
 
+class SearchScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton.icon(
+        icon: Icon(Icons.search),
+        label: Text('Search Users'),
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: UserSearchDelegate(),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class UserSearchDelegate extends SearchDelegate<String> {
-  final List<String> users = ['Qaisar Khan', 'Ali Ahmed', 'Usman Khan', 'Ayesha Malik'];
+  final List<String> users = [
+    'Qaisar Khan',
+    'Ali Ahmed',
+    'Usman Khan',
+    'Ayesha Malik'
+  ];
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -139,7 +171,9 @@ class UserSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final results = users.where((user) => user.toLowerCase().contains(query.toLowerCase())).toList();
+    final results = users
+        .where((user) => user.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
     return ListView.builder(
       itemCount: results.length,
@@ -156,7 +190,9 @@ class UserSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = users.where((user) => user.toLowerCase().startsWith(query.toLowerCase())).toList();
+    final suggestions = users
+        .where((user) => user.toLowerCase().startsWith(query.toLowerCase()))
+        .toList();
 
     return ListView.builder(
       itemCount: suggestions.length,

@@ -20,4 +20,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/pics.jpg  # Add your logo here for the splash screen if needed
+    - images/
+    # - assets/pics.jpg  # Add your logo here for the splash screen if needed
+    # - assets/insta1.png
+    # - assets/insta2.png

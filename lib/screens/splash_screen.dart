@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _controller.forward();
 
     // Navigate to Login Screen after 3 seconds
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               FadeTransition(
                 opacity: _animation,
                 child: Image.asset(
-                  'assets/pics.jpg',
+                  'images/insta1.png',
                   width: 150,
                   height: 150,
                 ),

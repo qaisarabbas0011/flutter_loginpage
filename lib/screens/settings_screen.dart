@@ -14,6 +14,7 @@ class SettingsScreen extends StatelessWidget {
             SettingsListItem(title: 'Security', icon: Icons.security),
             SettingsListItem(title: 'Language', icon: Icons.language),
             SettingsListItem(title: 'About', icon: Icons.info),
+            
           ],
         ),
       ),
@@ -36,6 +37,8 @@ class SettingsListItem extends StatelessWidget {
         trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: () {},
       ),
+      
     );
+    
   }
 }
