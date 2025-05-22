@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/forgot_password_controller.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   @override
@@ -6,9 +7,13 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  bool _emailSent = false;
+  final ForgotPasswordController _controller = ForgotPasswordController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +27,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 17, 19, 18),
-              const Color.fromARGB(255, 12, 12, 12)
+              Color.fromARGB(255, 17, 19, 18),
+              Color.fromARGB(255, 12, 12, 12),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: Center(
-          child: _emailSent
+          child: _controller.emailSent
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -51,7 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ],
                 )
               : Form(
-                  key: _formKey,
+                  key: _controller.formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -62,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       SizedBox(height: 20),
                       TextFormField(
-                        controller: _emailController,
+                        controller: _controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
@@ -88,10 +93,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              _emailSent = true;
-                            });
+                          final sent = _controller.validateAndSend();
+                          if (sent) {
+                            setState(() {});
                           }
                         },
                         child: Text('Send Reset Link'),
