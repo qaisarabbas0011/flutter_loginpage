@@ -1,54 +1,81 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../models/login_model.dart';
 
-class LoginScreenController extends ChangeNotifier {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginController extends GetxController {
+  // Text editing controllers
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  bool isButtonEnabled = false;
-  bool isPasswordVisible = false;
-  bool isUsernameValid = true;
-  bool isPasswordValid = true;
-  String usernameErrorMessage = '';
-  bool hasStartedTypingUsername = false;
+  // Reactive variables for UI state
+  var isPasswordVisible = false.obs;
+  var isUsernameValid = true.obs;
+  var usernameErrorMessage = ''.obs;
+  var isPasswordValid = true.obs;
+  var isButtonEnabled = false.obs;
+  var hasStartedTypingUsername = false.obs;
 
   final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
   final RegExp _passwordRegex = RegExp(r'^[a-zA-Z0-9!@#\$&*~]+$');
 
-  LoginScreenController() {
-    usernameController.addListener(_checkFields);
-    passwordController.addListener(_checkFields);
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Listen for text changes
+    usernameController.addListener(_validateUsername);
+    passwordController.addListener(_validatePassword);
   }
 
-  void _checkFields() {
-    if (!hasStartedTypingUsername && usernameController.text.isNotEmpty) {
-      hasStartedTypingUsername = true;
+  void _validateUsername() {
+    if (!hasStartedTypingUsername.value && usernameController.text.isNotEmpty) {
+      hasStartedTypingUsername.value = true;
     }
 
-    if (hasStartedTypingUsername) {
+    if (hasStartedTypingUsername.value) {
       if (usernameController.text.isEmpty || _usernameRegex.hasMatch(usernameController.text)) {
-        isUsernameValid = true;
-        usernameErrorMessage = '';
+        isUsernameValid.value = true;
+        usernameErrorMessage.value = '';
       } else {
-        isUsernameValid = false;
-        usernameErrorMessage = ' Special characters are not allowed!';
+        isUsernameValid.value = false;
+        usernameErrorMessage.value = 'Special characters are not allowed!';
       }
     }
 
-    isPasswordValid = passwordController.text.length >= 6 &&
-        _passwordRegex.hasMatch(passwordController.text);
+    _updateButtonStatus();
+  }
 
-    isButtonEnabled = isUsernameValid && isPasswordValid;
+  void _validatePassword() {
+    final pass = passwordController.text;
+    if (pass.length >= 6 && _passwordRegex.hasMatch(pass)) {
+      isPasswordValid.value = true;
+    } else {
+      isPasswordValid.value = false;
+    }
 
-    notifyListeners();
+    _updateButtonStatus();
+  }
+
+  void _updateButtonStatus() {
+    isButtonEnabled.value = isUsernameValid.value && isPasswordValid.value;
   }
 
   void togglePasswordVisibility() {
-    isPasswordVisible = !isPasswordVisible;
-    notifyListeners();
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  void disposeControllers() {
+  // Optionally, you can create a method to get the LoginModel from inputs
+  LoginModel getLoginModel() {
+    return LoginModel(
+      username: usernameController.text.trim(),
+      password: passwordController.text,
+    );
+  }
+
+  @override
+  void onClose() {
     usernameController.dispose();
     passwordController.dispose();
+    super.onClose();
   }
 }

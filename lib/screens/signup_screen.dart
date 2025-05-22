@@ -1,57 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import '../controllers/signup_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
+  final SignUpController controller = Get.put(SignUpController());
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => SignUpController(),
-      child: Scaffold(
-        body: Consumer<SignUpController>(
-          builder: (context, controller, _) => Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 17, 19, 18),
-                  Color.fromARGB(255, 12, 12, 12)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: AssetImage('images/insta2.png'),
-                    ),
-                    SizedBox(height: 30),
-                    _buildTextField(
-                      label: 'Username',
-                      hint: 'Only letters, numbers, and _ are allowed',
-                      icon: Icons.person,
-                      controller: controller.usernameController,
-                      isPassword: false,
-                      onToggleVisibility: null,
-                      isVisible: false,
-                    ),
-                    if (!controller.isUsernameValid &&
-                        controller.hasStartedTypingUsername)
-                      Padding(
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF111312), Color(0xFF0C0C0C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: AssetImage('images/insta2.png'),
+                ),
+                SizedBox(height: 30),
+                _buildTextField(
+                  label: 'Username',
+                  hint: 'Only letters, numbers, and _ are allowed',
+                  icon: Icons.person,
+                  controller: controller.usernameController,
+                  isPassword: false,
+                  onToggleVisibility: null,
+                  isVisible: false,
+                ),
+                Obx(() => !controller.isUsernameValid.value &&
+                        controller.hasStartedTypingUsername.value
+                    ? Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
-                          controller.usernameErrorMessage,
-                          style:
-                              TextStyle(color: Colors.redAccent, fontSize: 12),
+                          controller.usernameErrorMessage.value,
+                          style: TextStyle(color: Colors.redAccent, fontSize: 12),
                         ),
-                      ),
-                    SizedBox(height: 20),
-                    _buildTextField(
+                      )
+                    : SizedBox.shrink()),
+                SizedBox(height: 20),
+                Obx(() => _buildTextField(
                       label: 'Password',
                       hint:
                           'At least 6 characters with letters, numbers, or special characters',
@@ -59,41 +55,41 @@ class SignUpScreen extends StatelessWidget {
                       controller: controller.passwordController,
                       isPassword: true,
                       onToggleVisibility: controller.togglePasswordVisibility,
-                      isVisible: controller.isPasswordVisible,
-                    ),
-                    SizedBox(height: 20),
-                    _buildTextField(
+                      isVisible: controller.isPasswordVisible.value,
+                    )),
+                SizedBox(height: 20),
+                Obx(() => _buildTextField(
                       label: 'Confirm Password',
                       hint: 'Re-enter password',
                       icon: Icons.lock_outline,
                       controller: controller.confirmPasswordController,
                       isPassword: true,
-                      onToggleVisibility:
-                          controller.toggleConfirmPasswordVisibility,
-                      isVisible: controller.isConfirmPasswordVisible,
-                    ),
-                    if (!controller.doPasswordsMatch &&
-                        controller.confirmPasswordController.text.isNotEmpty)
-                      Padding(
+                      onToggleVisibility: controller.toggleConfirmPasswordVisibility,
+                      isVisible: controller.isConfirmPasswordVisible.value,
+                    )),
+                Obx(() => !controller.doPasswordsMatch.value &&
+                        controller.confirmPasswordController.text.isNotEmpty
+                    ? Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
                           ' Passwords do not match!',
-                          style:
-                              TextStyle(color: Colors.redAccent, fontSize: 12),
+                          style: TextStyle(color: Colors.redAccent, fontSize: 12),
                         ),
-                      ),
-                    SizedBox(height: 30),
-                    AnimatedOpacity(
-                      opacity: controller.isButtonEnabled ? 1.0 : 0.5,
+                      )
+                    : SizedBox.shrink()),
+                SizedBox(height: 30),
+                Obx(() => AnimatedOpacity(
+                      opacity: controller.isButtonEnabled.value ? 1.0 : 0.5,
                       duration: Duration(milliseconds: 300),
                       child: ElevatedButton(
-                        onPressed: controller.isButtonEnabled
+                        onPressed: controller.isButtonEnabled.value
                             ? () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Account created!'),
-                                    backgroundColor: Colors.green,
-                                  ),
+                                Get.snackbar(
+                                  'Success',
+                                  'Account created!',
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                  snackPosition: SnackPosition.BOTTOM,
                                 );
                               }
                             : null,
@@ -101,8 +97,8 @@ class SignUpScreen extends StatelessWidget {
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.teal,
                           elevation: 5,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -113,18 +109,16 @@ class SignUpScreen extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        "Already have an account? Login",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ],
+                    )),
+                SizedBox(height: 10),
+                TextButton(
+                  onPressed: () => Get.back(),
+                  child: Text(
+                    "Already have an account? Login",
+                    style: TextStyle(color: Colors.white70),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -146,11 +140,7 @@ class SignUpScreen extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
         ],
       ),
       child: TextField(

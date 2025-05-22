@@ -1,19 +1,24 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../screens/login_screen.dart';  // Adjust the path based on your structure
+import '../screens/login_screen.dart';
+import '../models/splash_model.dart'; 
 
 class SplashController extends GetxController with GetSingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
+  final SplashModel splashModel = SplashModel();
+
+  late TickerProvider vsync;
+
+  SplashController({required this.vsync});
 
   @override
   void onInit() {
     super.onInit();
 
-    // Setup animation
     animationController = AnimationController(
       duration: Duration(seconds: 2),
-      vsync: this,
+      vsync: vsync,
     );
 
     fadeAnimation = CurvedAnimation(
@@ -21,11 +26,13 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
       curve: Curves.easeInOut,
     );
 
-    animationController.forward();
+    animationController.forward().whenComplete(() {
+      splashModel.markAnimationCompleted();
+    });
 
-    // Navigate after delay
     Future.delayed(Duration(seconds: 4), () {
-      Get.off(() => LoginScreen()); // PushReplacement
+      splashModel.markNavigationDone();
+      Get.off(() => LoginScreen());
     });
   }
 

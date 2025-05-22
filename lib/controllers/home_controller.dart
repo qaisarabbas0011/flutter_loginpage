@@ -1,22 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class HomeController extends ChangeNotifier {
-  int _currentIndex = 0;
-  List<Map<String, String>> _users = [
+class HomeController extends GetxController {
+  var currentIndex = 0.obs;
+
+  var users = <Map<String, String>>[
     {'name': 'Qaisar Khan', 'contact': 'qaisar@example.com'},
     {'name': 'Ali Ahmed', 'contact': 'ali@example.com'},
-  ];
-
-  int get currentIndex => _currentIndex;
-  List<Map<String, String>> get users => _users;
+  ].obs;
 
   void setCurrentIndex(int index) {
-    _currentIndex = index;
-    notifyListeners();
+    currentIndex.value = index;
   }
 
   void addUser(String name) {
-    _users.add({'name': name, 'contact': '$name@example.com'});
-    notifyListeners();
+    users.add({'name': name, 'contact': '$name@example.com'});
   }
 }

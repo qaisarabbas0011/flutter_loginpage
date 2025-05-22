@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ForgotPasswordController {
-  final TextEditingController emailController = TextEditingController();
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool emailSent = false;
+class ForgotPasswordController extends GetxController {
+  final emailController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  // Reactive boolean to track if email is sent
+  var emailSent = false.obs;
 
   bool validateAndSend() {
     if (formKey.currentState?.validate() ?? false) {
-      emailSent = true;
-      // You can integrate Firebase or API logic here
+      emailSent.value = true;
+      // Add your password reset logic here
       // e.g., FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text);
       return true;
     }
@@ -16,11 +19,13 @@ class ForgotPasswordController {
   }
 
   void resetState() {
-    emailSent = false;
+    emailSent.value = false;
     emailController.clear();
   }
 
-  void dispose() {
+  @override
+  void onClose() {
     emailController.dispose();
+    super.onClose();
   }
 }

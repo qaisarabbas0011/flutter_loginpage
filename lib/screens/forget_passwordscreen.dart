@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../controllers/forgot_password_controller.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  @override
-  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
-}
-
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final ForgotPasswordController _controller = ForgotPasswordController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+class ForgotPasswordScreen extends StatelessWidget {
+  final ForgotPasswordController controller = Get.put(ForgotPasswordController());
 
   @override
   Widget build(BuildContext context) {
@@ -35,83 +25,85 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
         child: Center(
-          child: _controller.emailSent
-              ? Column(
+          child: Obx(() {
+            if (controller.emailSent.value) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 80),
+                  SizedBox(height: 20),
+                  Text(
+                    'Password reset link has been sent!',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    child: Text('Back to Login'),
+                    onPressed: () {
+                      controller.resetState();
+                      Get.back();
+                    },
+                  ),
+                ],
+              );
+            } else {
+              return Form(
+                key: controller.formKey,
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green, size: 80),
-                    SizedBox(height: 20),
                     Text(
-                      'Password reset link has been sent!',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      'Enter your email to reset password',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
-                    ElevatedButton(
-                      child: Text('Back to Login'),
-                      onPressed: () {
-                        Navigator.pop(context);
+                    TextFormField(
+                      controller: controller.emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: TextStyle(color: Colors.white),
+                        prefixIcon: Icon(Icons.email, color: Colors.teal),
+                        filled: true,
+                        fillColor: Colors.white10,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                          return 'Enter a valid email';
+                        }
+                        return null;
                       },
-                    )
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        controller.validateAndSend();
+                      },
+                      child: Text('Send Reset Link'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.teal,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
                   ],
-                )
-              : Form(
-                  key: _controller.formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Enter your email to reset password',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        controller: _controller.emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: TextStyle(color: Colors.white),
-                          prefixIcon: Icon(Icons.email, color: Colors.teal),
-                          filled: true,
-                          fillColor: Colors.white10,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                            return 'Enter a valid email';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          final sent = _controller.validateAndSend();
-                          if (sent) {
-                            setState(() {});
-                          }
-                        },
-                        child: Text('Send Reset Link'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.teal,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
+              );
+            }
+          }),
         ),
       ),
     );

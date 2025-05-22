@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/profile_screen_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
+  // Use Get.put() to make controller available and managed by GetX
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
+    final menuItems = controller.getProfileItems();
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Padding(
@@ -16,44 +23,38 @@ class ProfileScreen extends StatelessWidget {
               child: Icon(Icons.person, size: 50, color: Colors.white),
             ),
             SizedBox(height: 20),
-            Text(
-              'Qaisar Khan',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            // Use Obx to listen reactively to changes in userName
+            Obx(() => Text(
+                  controller.userName.value,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                )),
             SizedBox(height: 10),
-            Text('qaisar@example.com', style: TextStyle(color: Colors.grey[700])),
+            Obx(() => Text(
+                  controller.userEmail.value,
+                  style: TextStyle(color: Colors.grey[700]),
+                )),
             SizedBox(height: 30),
             Expanded(
-              child: ListView(
-                children: [
-                  ProfileListItem(title: 'Account Settings', icon: Icons.settings),
-                  ProfileListItem(title: 'Privacy', icon: Icons.lock),
-                  ProfileListItem(title: 'Notifications', icon: Icons.notifications),
-                  ProfileListItem(title: 'Help & Support', icon: Icons.help),
-                ],
+              child: ListView.builder(
+                itemCount: menuItems.length,
+                itemBuilder: (context, index) {
+                  final item = menuItems[index];
+                  return Card(
+                    child: ListTile(
+                      leading: Icon(item['icon'], color: Colors.teal),
+                      title: Text(item['title']),
+                      trailing:
+                          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                      onTap: () {
+                        // Add navigation or action here
+                      },
+                    ),
+                  );
+                },
               ),
-            )
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ProfileListItem extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  ProfileListItem({required this.title, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: Icon(icon, color: Colors.teal),
-        title: Text(title),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-        onTap: () {},
       ),
     );
   }
