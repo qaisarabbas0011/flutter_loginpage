@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/login_model.dart';
+import '../screens/home_screen.dart';
 
 class LoginController extends GetxController {
-  // Text editing controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // Reactive variables for UI state
   var isPasswordVisible = false.obs;
   var isUsernameValid = true.obs;
   var usernameErrorMessage = ''.obs;
@@ -15,14 +15,11 @@ class LoginController extends GetxController {
   var isButtonEnabled = false.obs;
   var hasStartedTypingUsername = false.obs;
 
-  final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
-  final RegExp _passwordRegex = RegExp(r'^[a-zA-Z0-9!@#\$&*~]+$');
+  final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   @override
   void onInit() {
     super.onInit();
-
-    // Listen for text changes
     usernameController.addListener(_validateUsername);
     passwordController.addListener(_validatePassword);
   }
@@ -33,12 +30,12 @@ class LoginController extends GetxController {
     }
 
     if (hasStartedTypingUsername.value) {
-      if (usernameController.text.isEmpty || _usernameRegex.hasMatch(usernameController.text)) {
+      if (_emailRegex.hasMatch(usernameController.text.trim())) {
         isUsernameValid.value = true;
         usernameErrorMessage.value = '';
       } else {
         isUsernameValid.value = false;
-        usernameErrorMessage.value = 'Special characters are not allowed!';
+        usernameErrorMessage.value = 'Enter a valid email!';
       }
     }
 
@@ -47,12 +44,7 @@ class LoginController extends GetxController {
 
   void _validatePassword() {
     final pass = passwordController.text;
-    if (pass.length >= 6 && _passwordRegex.hasMatch(pass)) {
-      isPasswordValid.value = true;
-    } else {
-      isPasswordValid.value = false;
-    }
-
+    isPasswordValid.value = pass.length >= 6;
     _updateButtonStatus();
   }
 
@@ -64,7 +56,22 @@ class LoginController extends GetxController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  // Optionally, you can create a method to get the LoginModel from inputs
+  Future<void> loginWithFirebase() async {
+    final email = usernameController.text.trim();
+    final password = passwordController.text.trim();
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      Get.off(() => HomeScreen());
+    } catch (e) {
+      Get.snackbar('Login Failed', e.toString(),
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
+  }
+
   LoginModel getLoginModel() {
     return LoginModel(
       username: usernameController.text.trim(),

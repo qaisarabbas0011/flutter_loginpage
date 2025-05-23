@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart';
+import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'screens/login_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
-   
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // Hide Flutter's debug mode banner
-      title: 'Pro App',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: SplashScreen(),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginScreen(),
     );
   }
 }

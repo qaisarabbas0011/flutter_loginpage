@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../screens/login_screen.dart';
-import '../models/splash_model.dart'; 
+import '../models/splash_model.dart';
 
 class SplashController extends GetxController with GetSingleTickerProviderStateMixin {
   late AnimationController animationController;
@@ -15,9 +16,12 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
   @override
   void onInit() {
     super.onInit();
+    _startSplash();
+  }
 
+  Future<void> _startSplash() async {
     animationController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: vsync,
     );
 
@@ -30,10 +34,17 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
       splashModel.markAnimationCompleted();
     });
 
-    Future.delayed(Duration(seconds: 4), () {
-      splashModel.markNavigationDone();
-      Get.off(() => LoginScreen());
-    });
+    // Wait for Firebase (in case not initialized yet)
+    try {
+      await Firebase.initializeApp(); // Safe to call again
+    } catch (e) {
+      print("Firebase already initialized or error: $e");
+    }
+
+    // Continue to next screen after delay
+    await Future.delayed(const Duration(seconds: 4));
+    splashModel.markNavigationDone();
+    Get.off(() => LoginScreen());
   }
 
   @override
