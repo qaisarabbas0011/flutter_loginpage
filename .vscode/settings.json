@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/loginpage/linux"
+    "cmake.sourceDirectory": "D:/loginpage/linux",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
