@@ -1,39 +1,33 @@
-// TODO Implement this library.
-// home_content.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 class HomeContent extends StatelessWidget {
-  final List<Map<String, String>> users = [
-    {'name': 'Qaisar Khan', 'contact': 'qaisar@example.com'},
-    {'name': 'Ali Ahmed', 'contact': 'ali@example.com'},
-  ];
+  final HomeController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
-        itemCount: users.length,
+    return Obx(() {
+      if (controller.users.isEmpty) {
+        return Center(
+          child: Text('No users found', style: TextStyle(fontSize: 18)),
+        );
+      }
+      return ListView.builder(
+        itemCount: controller.users.length,
         itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.only(bottom: 12),
-            elevation: 4,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.teal,
-                child: Text(users[index]['name']![0]),
-              ),
-              title: Text(
-                users[index]['name']!,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(users[index]['contact']!),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-              onTap: () {},
+          final user = controller.users[index];
+          return ListTile(
+            leading: CircleAvatar(
+              child: Text(user['name'][0].toUpperCase()),
+              backgroundColor: Colors.teal,
+              foregroundColor: Colors.white,
             ),
+            title: Text(user['name']),
+            subtitle: Text(user['contact']),
           );
         },
-      ),
-    );
+      );
+    });
   }
 }

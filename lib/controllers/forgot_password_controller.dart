@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordController extends GetxController {
   final emailController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  // Reactive boolean to track if email is sent
   var emailSent = false.obs;
+  var isLoading = false.obs;
 
-  bool validateAndSend() {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> validateAndSend() async {
     if (formKey.currentState?.validate() ?? false) {
-      emailSent.value = true;
-      // Add your password reset logic here
-      // e.g., FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text);
-      return true;
+      try {
+        isLoading.value = true;
+        await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+        emailSent.value = true;
+      } on FirebaseAuthException catch (e) {
+        String message = 'An error occurred';
+        if (e.code == 'user-not-found') {
+          message = 'No user found with this email';
+        }
+        Get.snackbar(
+          'Error',
+          message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      } finally {
+        isLoading.value = false;
+      }
     }
-    return false;
   }
 
   void resetState() {

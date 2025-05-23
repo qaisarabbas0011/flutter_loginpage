@@ -84,21 +84,22 @@ class ForgotPasswordScreen extends StatelessWidget {
                       },
                     ),
                     SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        controller.validateAndSend();
-                      },
-                      child: Text('Send Reset Link'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.teal,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    ),
+                    controller.isLoading.value
+                        ? CircularProgressIndicator(color: Colors.teal)
+                        : ElevatedButton(
+                            onPressed: () {
+                              controller.validateAndSend();
+                            },
+                            child: Text('Send Reset Link'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.teal,
+                              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               );

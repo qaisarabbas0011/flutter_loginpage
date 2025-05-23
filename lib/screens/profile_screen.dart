@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/controllers/profile_screen_controller.dart';
 import 'package:get/get.dart';
-import '../controllers/profile_screen_controller.dart';
+
 
 class ProfileScreen extends StatelessWidget {
-  // Use Get.put() to make controller available and managed by GetX
   final ProfileController controller = Get.put(ProfileController());
 
   @override
@@ -23,14 +23,17 @@ class ProfileScreen extends StatelessWidget {
               child: Icon(Icons.person, size: 50, color: Colors.white),
             ),
             SizedBox(height: 20),
-            // Use Obx to listen reactively to changes in userName
             Obx(() => Text(
-                  controller.userName.value,
+                  controller.userName.value.isEmpty
+                      ? 'Loading...'
+                      : controller.userName.value,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 )),
             SizedBox(height: 10),
             Obx(() => Text(
-                  controller.userEmail.value,
+                  controller.userEmail.value.isEmpty
+                      ? ''
+                      : controller.userEmail.value,
                   style: TextStyle(color: Colors.grey[700]),
                 )),
             SizedBox(height: 30),
@@ -43,10 +46,9 @@ class ProfileScreen extends StatelessWidget {
                     child: ListTile(
                       leading: Icon(item['icon'], color: Colors.teal),
                       title: Text(item['title']),
-                      trailing:
-                          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
                       onTap: () {
-                        // Add navigation or action here
+                        // Implement navigation/actions here
                       },
                     ),
                   );

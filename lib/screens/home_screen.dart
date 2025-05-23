@@ -3,8 +3,17 @@ import 'package:get/get.dart';
 
 import '../controllers/home_controller.dart';
 import 'home_content.dart';
-import 'profile_screen.dart';
-import 'settings_screen.dart';
+
+// Dummy placeholders for these screens:
+class ProfileScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Center(child: Text('Profile Screen'));
+}
+
+class SettingsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Center(child: Text('Settings Screen'));
+}
 
 class HomeScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
@@ -62,7 +71,6 @@ class HomeScreen extends StatelessWidget {
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
               BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-              BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
             ],
             backgroundColor: Colors.white,
             selectedItemColor: Colors.teal,

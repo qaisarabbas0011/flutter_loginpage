@@ -1,3 +1,4 @@
+// signup_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/signup_controller.dart';
@@ -47,6 +48,28 @@ class SignUpScreen extends StatelessWidget {
                       )
                     : SizedBox.shrink()),
                 SizedBox(height: 20),
+
+                // Email field
+                _buildTextField(
+                  label: 'Email',
+                  hint: 'Enter a valid email address',
+                  icon: Icons.email,
+                  controller: controller.emailController,
+                  isPassword: false,
+                  onToggleVisibility: null,
+                  isVisible: false,
+                ),
+                Obx(() => !controller.isEmailValid.value
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          controller.emailErrorMessage.value,
+                          style: TextStyle(color: Colors.redAccent, fontSize: 12),
+                        ),
+                      )
+                    : SizedBox.shrink()),
+                SizedBox(height: 20),
+
                 Obx(() => _buildTextField(
                       label: 'Password',
                       hint:
@@ -72,7 +95,7 @@ class SignUpScreen extends StatelessWidget {
                     ? Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
-                          ' Passwords do not match!',
+                          'Passwords do not match!',
                           style: TextStyle(color: Colors.redAccent, fontSize: 12),
                         ),
                       )
@@ -84,13 +107,7 @@ class SignUpScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: controller.isButtonEnabled.value
                             ? () {
-                                Get.snackbar(
-                                  'Success',
-                                  'Account created!',
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
+                                controller.signUp();
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

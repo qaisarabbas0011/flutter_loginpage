@@ -1,12 +1,32 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileController extends GetxController {
-  // User info as RxString if you want to update them dynamically
-  var userName = 'Qaisar Khan'.obs;
-  var userEmail = 'qaisar@example.com'.obs;
+  var userName = ''.obs;
+  var userEmail = ''.obs;
 
-  // Profile menu items can remain as a normal getter since they are static
+  final String userId = 'your_user_id_here'; // Replace with actual user id or method to get current user id
+
+  final CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserProfile();
+  }
+
+  void _loadUserProfile() {
+    usersCollection.doc(userId).snapshots().listen((doc) {
+      if (doc.exists) {
+        var data = doc.data() as Map<String, dynamic>;
+        userName.value = data['name'] ?? '';
+        userEmail.value = data['contact'] ?? '';
+      }
+    });
+  }
+
   List<Map<String, dynamic>> getProfileItems() {
     return [
       {'title': 'Account Settings', 'icon': Icons.settings},
