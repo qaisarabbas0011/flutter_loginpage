@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../controllers/splash_screen_controller.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }

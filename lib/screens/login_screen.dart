@@ -5,17 +5,18 @@ import 'signup_screen.dart';
 import 'forget_passwordscreen.dart';
 
 class LoginScreen extends StatelessWidget {
-  final LoginController controller = Get.put(LoginController());
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final LoginController controller = Get.put(LoginController());
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF111312), Color(0xFF0C0C0C)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [Colors.teal, Colors.tealAccent],
           ),
         ),
         child: Center(

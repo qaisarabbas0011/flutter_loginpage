@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import '../controllers/forgot_password_controller.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  final ForgotPasswordController controller = Get.put(ForgotPasswordController());
+  late final ForgotPasswordController controller = Get.put(ForgotPasswordController());
+
+  ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +92,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                             onPressed: () {
                               controller.validateAndSend();
                             },
-                            child: Text('Send Reset Link'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.teal,
@@ -99,6 +100,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
+                            child: Text('Send Reset Link'),
                           ),
                   ],
                 ),

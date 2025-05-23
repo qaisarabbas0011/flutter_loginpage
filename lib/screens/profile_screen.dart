@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 
 
 class ProfileScreen extends StatelessWidget {
+  ProfileScreen({super.key});
+
   final ProfileController controller = Get.put(ProfileController());
 
   @override

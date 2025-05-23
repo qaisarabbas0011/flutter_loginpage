@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +28,7 @@ class SettingsListItem extends StatelessWidget {
   final String title;
   final IconData icon;
 
-  SettingsListItem({required this.title, required this.icon});
+  const SettingsListItem({super.key, required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {

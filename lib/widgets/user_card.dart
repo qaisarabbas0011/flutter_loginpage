@@ -5,7 +5,7 @@ class UserCard extends StatelessWidget {
   final String contact;
   final String number;
 
-  UserCard({required this.name, required this.contact, required this.number});
+  const UserCard({super.key, required this.name, required this.contact, required this.number});
 
   @override
   Widget build(BuildContext context) {

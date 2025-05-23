@@ -3,7 +3,11 @@ import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
 class HomeContent extends StatelessWidget {
-  final HomeController controller = Get.find();
+  late final HomeController controller;
+
+  HomeContent({super.key}) {
+    controller = Get.find();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +23,9 @@ class HomeContent extends StatelessWidget {
           final user = controller.users[index];
           return ListTile(
             leading: CircleAvatar(
-              child: Text(user['name'][0].toUpperCase()),
               backgroundColor: Colors.teal,
               foregroundColor: Colors.white,
+              child: Text(user['name'][0].toUpperCase()),
             ),
             title: Text(user['name']),
             subtitle: Text(user['contact']),

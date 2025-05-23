@@ -6,11 +6,15 @@ import 'home_content.dart';
 
 // Dummy placeholders for these screens:
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) => Center(child: Text('Profile Screen'));
 }
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) => Center(child: Text('Settings Screen'));
 }
@@ -24,13 +28,15 @@ class HomeScreen extends StatelessWidget {
     SettingsScreen(),
   ];
 
+  HomeScreen({super.key});
+
   void _onAddUser(BuildContext context) {
-    TextEditingController _userController = TextEditingController();
+    TextEditingController userController = TextEditingController();
 
     Get.defaultDialog(
       title: 'Add New User',
       content: TextField(
-        controller: _userController,
+        controller: userController,
         decoration: InputDecoration(hintText: 'Enter User Name'),
       ),
       cancel: TextButton(
@@ -39,8 +45,8 @@ class HomeScreen extends StatelessWidget {
       ),
       confirm: TextButton(
         onPressed: () {
-          if (_userController.text.trim().isNotEmpty) {
-            controller.addUser(_userController.text.trim());
+          if (userController.text.trim().isNotEmpty) {
+            controller.addUser(userController.text.trim());
             Get.back();
           }
         },
@@ -80,12 +86,12 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onAddUser(context),
         backgroundColor: Colors.teal,
-        child: Icon(Icons.add),
         elevation: 0,
         tooltip: 'Add User',
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
+        child: Icon(Icons.add),
       ),
     );
   }
